@@ -4,7 +4,7 @@
 
 
 int board[9], lastplayed, select, winner, a, b, i, aimove=0, xwins=0, owins=0, dwins=0;
-bool gameover, turn, p2ai,aiturndone;
+bool gameover, turn, p2ai;
 string msg;
 
 
