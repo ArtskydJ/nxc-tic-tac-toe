@@ -1,0 +1,224 @@
+//Tic Tac Toe
+//Joseph Dykstra
+//9-25-2012
+
+
+int board[9], lastplayed, select, winner, a, b, i, aimove=0, xwins=0, owins=0, dwins=0;
+bool gameover, turn, p2ai,aiturndone;
+string msg;
+
+
+void CheckWin() {
+    winner = 0;
+    for (int i = 1; i < 3; i++) {
+        if (((board[0] == i) && (board[1] == i) && (board[2] == i))
+        ||  ((board[3] == i) && (board[4] == i) && (board[5] == i))
+        ||  ((board[6] == i) && (board[7] == i) && (board[8] == i))
+        ||  ((board[0] == i) && (board[3] == i) && (board[6] == i))
+        ||  ((board[1] == i) && (board[4] == i) && (board[7] == i))
+        ||  ((board[2] == i) && (board[5] == i) && (board[8] == i))
+        ||  ((board[2] == i) && (board[4] == i) && (board[6] == i))
+        ||  ((board[0] == i) && (board[4] == i) && (board[8] == i))) {
+			winner=i;
+		}
+    }
+    msg = StrCat(msg, ", CW=", NumToStr(winner));
+    if (winner == 1 || winner == 2) {
+        gameover = true;
+        if (winner == 1) xwins += 1;
+        if (winner == 2) owins += 1;
+    }
+    select = 10;
+    for (i = 8; i >= 0; i--) {
+		if (board[i] == 0) select = i;
+	}
+    if (select == 10) {
+		if (gameover == false) dwins += 1;
+		gameover = true;
+		msg = StrCat(msg, ", GO");
+	}
+    if (gameover == false) Wait(500);
+    SendResponseString(MAILBOX10, msg);
+	msg = "";
+}
+
+
+void DEBUGredraw() {
+    ClearScreen();
+    TextOut(0, LCD_LINE1, NumToStr(board[0]) + NumToStr(board[1]) + NumToStr(board[2]), 0);
+    TextOut(0, LCD_LINE2, NumToStr(board[3]) + NumToStr(board[4]) + NumToStr(board[5]), 0);
+    TextOut(0, LCD_LINE3, NumToStr(board[6]) + NumToStr(board[7]) + NumToStr(board[8]), 0);
+    msg = StrCat(msg, ", DR");
+    SendResponseString(MAILBOX10, msg);
+	msg = "";
+}
+
+
+void Redraw(bool dslct, int pslct, bool odraw) {
+    ClearScreen();
+    LineOut(21, 0, 21, 63, 0); // horizontal
+	LineOut(42, 0, 42, 63, 0); // horizontal
+    LineOut(0, 21, 63, 21, 0); // vertical
+	LineOut(0, 42, 63, 42, 0); // vertical
+    for (int k = 0; k < 9; k++) {
+        if (board[k] == 1) {
+			LineOut(((k % 3) * 21) + 3, 60 - ((k / 3) * 21), ((k % 3) * 21) + 18, 45 - ((k / 3) * 21), 0);
+            LineOut(((k % 3) * 21) + 3, 45 - ((k / 3) * 21), ((k % 3) * 21) + 18, 60 - ((k / 3) * 21), 0);
+		}
+        if (board[k] == 2) {
+			CircleOut(((k % 3) * 21) + 10, 53 - ((k / 3) * 21), 8, 0);
+		}
+    }
+    TextOut(70, LCD_LINE1, "X: " + NumToStr(xwins), 0);
+    TextOut(70, LCD_LINE2, "O: " + NumToStr(owins), 0);
+    TextOut(70, LCD_LINE4, "D: " + NumToStr(dwins), 0);
+    if (dslct) {
+        RectOut(((pslct % 3) * 21) + 2, 44 - ((pslct / 3) * 21), 17, 17, 0);
+        if (odraw) {
+			CircleOut(((pslct % 3) * 21) + 10, 53 - ((pslct / 3) * 21), 8, 0);
+		} else {
+			LineOut(((pslct % 3) * 21) + 3, 60 - ((pslct / 3) * 21), ((pslct % 3) * 21) + 18, 45 - ((pslct / 3) * 21), 0);
+            LineOut(((pslct % 3) * 21) + 3, 45 - ((pslct / 3) * 21), ((pslct % 3) * 21) + 18, 60 - ((pslct / 3) * 21), 0);
+		}
+    }
+}
+
+    
+void P(bool plyr) {
+    if (gameover == false) {
+        while (!ButtonPressed(BTNCENTER)) {
+            if (ButtonPressed(BTNLEFT) || ButtonPressed(BTNRIGHT)) {
+                if (ButtonPressed(BTNLEFT)) {
+					i = select;
+                    do { i = (i + 8) % 9; } until(board[i] == 0)
+                    select = i;
+				}
+                if (ButtonPressed(BTNRIGHT)) {
+					i = select;
+                    do { i = (i + 1) % 9; } until(board[i] == 0)
+                    select = i;
+				}
+                until (!ButtonPressed(BTNLEFT) && !ButtonPressed(BTNRIGHT)) {}
+            }
+            Redraw(true, select, plyr);
+			// DEBUGredraw();
+            Wait(50);
+        }
+        until (!ButtonPressed(BTNCENTER)) {}
+        board[select] = plyr + 1;
+        msg = StrCat(msg, ", p", NumToStr(plyr), "=", NumToStr(select));
+        Redraw(false, 0, plyr);
+		// DEBUGredraw();
+        CheckWin();
+    }
+}
+
+
+void ChooseP2() {
+    TextOut(16, LCD_LINE1, "TIC-TAC-TOE", 0);
+    TextOut(26, LCD_LINE7, "Players:", 0);
+    TextOut(16, LCD_LINE8, "1         2", 0);
+    until (ButtonPressed(BTNLEFT) || ButtonPressed(BTNRIGHT)) {}
+    p2ai = (ButtonPressed(BTNLEFT));
+    until (ButtonPressed(BTNLEFT) == false && ButtonPressed(BTNRIGHT) == false) {}
+}
+
+    
+void AI() {
+    if (gameover == false) {
+        msg = StrCat(msg,", AI");
+        aimove =- 1;
+        for (i = 1; i <= 2; i++) {
+            if ((board[0] == 0) && (board[1] == i) && (board[2] == i)) aimove = 0;
+            if ((board[3] == 0) && (board[4] == i) && (board[5] == i)) aimove = 3;
+            if ((board[6] == 0) && (board[7] == i) && (board[8] == i)) aimove = 6;
+            if ((board[0] == 0) && (board[3] == i) && (board[6] == i)) aimove = 0;
+            if ((board[1] == 0) && (board[4] == i) && (board[7] == i)) aimove = 1;
+            if ((board[2] == 0) && (board[5] == i) && (board[8] == i)) aimove = 2;
+            if ((board[2] == 0) && (board[4] == i) && (board[6] == i)) aimove = 2;
+            if ((board[0] == 0) && (board[4] == i) && (board[8] == i)) aimove = 0;
+
+            if ((board[0] == i) && (board[1] == 0) && (board[2] == i)) aimove = 1;
+            if ((board[3] == i) && (board[4] == 0) && (board[5] == i)) aimove = 4;
+            if ((board[6] == i) && (board[7] == 0) && (board[8] == i)) aimove = 7;
+            if ((board[0] == i) && (board[3] == 0) && (board[6] == i)) aimove = 3;
+            if ((board[1] == i) && (board[4] == 0) && (board[7] == i)) aimove = 4;
+            if ((board[2] == i) && (board[5] == 0) && (board[8] == i)) aimove = 5;
+            if ((board[2] == i) && (board[4] == 0) && (board[6] == i)) aimove = 4;
+            if ((board[0] == i) && (board[4] == 0) && (board[8] == i)) aimove = 4;
+			
+            if ((board[0] == i) && (board[1] == i) && (board[2] == 0)) aimove = 2;
+            if ((board[3] == i) && (board[4] == i) && (board[5] == 0)) aimove = 5;
+            if ((board[6] == i) && (board[7] == i) && (board[8] == 0)) aimove = 8;
+            if ((board[0] == i) && (board[3] == i) && (board[6] == 0)) aimove = 6;
+            if ((board[1] == i) && (board[4] == i) && (board[7] == 0)) aimove = 7;
+            if ((board[2] == i) && (board[5] == i) && (board[8] == 0)) aimove = 8;
+            if ((board[2] == i) && (board[4] == i) && (board[6] == 0)) aimove = 6;
+            if ((board[0] == i) && (board[4] == i) && (board[8] == 0)) aimove = 8;
+			
+            msg = StrCat(msg, ", AImove=", NumToStr(aimove));
+        }
+		while (aimove == -1) {
+			i = Random(9);
+			if (board[i] == 0) aimove = i;
+		}
+        msg = StrCat(msg, ", AImove=", NumToStr(aimove));
+        board[aimove] = 2; // AI is always O, Player 1 is always X
+        SendResponseString(MAILBOX10, msg);
+		msg = "";
+        Redraw(false, 0, 0);
+		// DEBUGredraw();
+        CheckWin();
+        }
+    }
+
+
+void GameOver() {
+    if (winner == 0) {
+		PlayTone(2000, 250);
+	} else {
+		PlayTone(4000, 250);
+	}
+    Redraw(false, 0, 0);
+	Wait(3000);
+    ClearScreen();
+    TextOut(16, LCD_LINE1, "TIC-TAC-TOE", 0);
+	TextOut(22, LCD_LINE4, "GAME OVER", 0);
+    if (winner == 0) {
+		TextOut(40, LCD_LINE5, "Draw", 0);
+	} else if (p2ai && winner == 2) {
+		TextOut(32, LCD_LINE5, "AI won", 0);
+	} else {
+		TextOut(12, LCD_LINE5, "Player " + NumToStr(winner) + " won", 0); // strcat?
+	}
+    TextOut(45, LCD_LINE8, "OK", 0);
+    until (ButtonPressed(BTNCENTER)) {}
+    ClearScreen();
+    until (ButtonPressed(BTNCENTER) == false) {}
+    }
+
+
+task main() {
+    ChooseP2();
+    for (int alt = 0; true; alt++) {
+        gameover = false;
+		turn = 0;
+		select = 0;
+        for (i = 0; i < 9; i++) board[i] = 0;
+        while (gameover == false) {
+            if (p2ai) {
+				if (alt % 2) {
+					AI();
+					P(0);
+				} else {
+					P(0);
+					AI();
+				}
+			} else {
+				P(alt % 2);
+				P((alt + 1) % 2);
+			}
+        }
+        GameOver();
+    }
+}
