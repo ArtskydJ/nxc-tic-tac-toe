@@ -10,6 +10,7 @@ I don't believe this requires the enchanced NBC/NXC firmware.
 ## Known Issues
 
 - The AI moves randomly, unless it is able to win, or block a win
+- If there are 10 or more wins / draws, you will see "1" instead of "10", or "13", etc.
 
 ## Build
 
