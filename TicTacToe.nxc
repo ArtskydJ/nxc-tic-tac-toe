@@ -9,180 +9,180 @@ bool gameover, turn, p2ai;
 bool ButtonPressed2(byte btn) { return ButtonPressed(btn, false); }
 
 void CheckWin() {
-    winner = 0;
-    for (int i = 1; i < 3; i++) {
-        if (((board[0] == i) && (board[1] == i) && (board[2] == i))
-        ||  ((board[3] == i) && (board[4] == i) && (board[5] == i))
-        ||  ((board[6] == i) && (board[7] == i) && (board[8] == i))
-        ||  ((board[0] == i) && (board[3] == i) && (board[6] == i))
-        ||  ((board[1] == i) && (board[4] == i) && (board[7] == i))
-        ||  ((board[2] == i) && (board[5] == i) && (board[8] == i))
-        ||  ((board[2] == i) && (board[4] == i) && (board[6] == i))
-        ||  ((board[0] == i) && (board[4] == i) && (board[8] == i))) {
+	winner = 0;
+	for (int i = 1; i < 3; i++) {
+		if (((board[0] == i) && (board[1] == i) && (board[2] == i))
+		||  ((board[3] == i) && (board[4] == i) && (board[5] == i))
+		||  ((board[6] == i) && (board[7] == i) && (board[8] == i))
+		||  ((board[0] == i) && (board[3] == i) && (board[6] == i))
+		||  ((board[1] == i) && (board[4] == i) && (board[7] == i))
+		||  ((board[2] == i) && (board[5] == i) && (board[8] == i))
+		||  ((board[2] == i) && (board[4] == i) && (board[6] == i))
+		||  ((board[0] == i) && (board[4] == i) && (board[8] == i))) {
 			winner=i;
 		}
-    }
-    if (winner == 1 || winner == 2) {
-        gameover = true;
-        if (winner == 1) xwins += 1;
-        if (winner == 2) owins += 1;
-    }
-    select = 10;
-    for (i = 8; i >= 0; i--) {
+	}
+	if (winner == 1 || winner == 2) {
+		gameover = true;
+		if (winner == 1) xwins += 1;
+		if (winner == 2) owins += 1;
+	}
+	select = 10;
+	for (i = 8; i >= 0; i--) {
 		if (board[i] == 0) select = i;
 	}
-    if (select == 10) {
+	if (select == 10) {
 		if (gameover == false) dwins += 1;
 		gameover = true;
 	}
-    if (gameover == false) Wait(500);
+	if (gameover == false) Wait(500);
 }
 
 
 void Redraw(bool dslct, int pslct, bool odraw) {
-    ClearScreen();
-    LineOut(21, 0, 21, 63, 0); // horizontal
+	ClearScreen();
+	LineOut(21, 0, 21, 63, 0); // horizontal
 	LineOut(42, 0, 42, 63, 0); // horizontal
-    LineOut(0, 21, 63, 21, 0); // vertical
+	LineOut(0, 21, 63, 21, 0); // vertical
 	LineOut(0, 42, 63, 42, 0); // vertical
-    for (int k = 0; k < 9; k++) {
-        if (board[k] == 1) {
+	for (int k = 0; k < 9; k++) {
+		if (board[k] == 1) {
 			LineOut(((k % 3) * 21) + 3, 60 - ((k / 3) * 21), ((k % 3) * 21) + 18, 45 - ((k / 3) * 21), 0);
-            LineOut(((k % 3) * 21) + 3, 45 - ((k / 3) * 21), ((k % 3) * 21) + 18, 60 - ((k / 3) * 21), 0);
+			LineOut(((k % 3) * 21) + 3, 45 - ((k / 3) * 21), ((k % 3) * 21) + 18, 60 - ((k / 3) * 21), 0);
 		}
-        if (board[k] == 2) {
+		if (board[k] == 2) {
 			CircleOut(((k % 3) * 21) + 10, 53 - ((k / 3) * 21), 8, 0);
 		}
-    }
-    TextOut(70, LCD_LINE1, "X: " + NumToStr(xwins), 0);
-    TextOut(70, LCD_LINE2, "O: " + NumToStr(owins), 0);
-    TextOut(70, LCD_LINE4, "D: " + NumToStr(dwins), 0);
-    if (dslct) {
-        RectOut(((pslct % 3) * 21) + 2, 44 - ((pslct / 3) * 21), 17, 17, 0);
-        if (odraw) {
+	}
+	TextOut(70, LCD_LINE1, "X: " + NumToStr(xwins), 0);
+	TextOut(70, LCD_LINE2, "O: " + NumToStr(owins), 0);
+	TextOut(70, LCD_LINE4, "D: " + NumToStr(dwins), 0);
+	if (dslct) {
+		RectOut(((pslct % 3) * 21) + 2, 44 - ((pslct / 3) * 21), 17, 17, 0);
+		if (odraw) {
 			CircleOut(((pslct % 3) * 21) + 10, 53 - ((pslct / 3) * 21), 8, 0);
 		} else {
 			LineOut(((pslct % 3) * 21) + 3, 60 - ((pslct / 3) * 21), ((pslct % 3) * 21) + 18, 45 - ((pslct / 3) * 21), 0);
-            LineOut(((pslct % 3) * 21) + 3, 45 - ((pslct / 3) * 21), ((pslct % 3) * 21) + 18, 60 - ((pslct / 3) * 21), 0);
+			LineOut(((pslct % 3) * 21) + 3, 45 - ((pslct / 3) * 21), ((pslct % 3) * 21) + 18, 60 - ((pslct / 3) * 21), 0);
 		}
-    }
+	}
 }
 
 
 void P(bool plyr) {
-    if (gameover == false) {
-        Redraw(true, select, plyr);
-        while (!ButtonPressed2(BTNCENTER)) {
-            if (ButtonPressed2(BTNLEFT) || ButtonPressed2(BTNRIGHT)) {
-                if (ButtonPressed2(BTNLEFT)) {
+	if (gameover == false) {
+		Redraw(true, select, plyr);
+		while (!ButtonPressed2(BTNCENTER)) {
+			if (ButtonPressed2(BTNLEFT) || ButtonPressed2(BTNRIGHT)) {
+				if (ButtonPressed2(BTNLEFT)) {
 					i = select;
-                    do { i = (i + 8) % 9; } until(board[i] == 0)
-                    select = i;
+					do { i = (i + 8) % 9; } until(board[i] == 0)
+					select = i;
 				}
-                if (ButtonPressed2(BTNRIGHT)) {
+				if (ButtonPressed2(BTNRIGHT)) {
 					i = select;
-                    do { i = (i + 1) % 9; } until(board[i] == 0)
-                    select = i;
+					do { i = (i + 1) % 9; } until(board[i] == 0)
+					select = i;
 				}
-                Redraw(true, select, plyr);
-                until (!ButtonPressed2(BTNLEFT) && !ButtonPressed2(BTNRIGHT)) {}
-            }
-            Wait(100);
-        }
-        board[select] = plyr + 1;
-        Redraw(false, 0, plyr);
-        until (!ButtonPressed2(BTNCENTER)) {}
-        CheckWin();
-    }
+				Redraw(true, select, plyr);
+				until (!ButtonPressed2(BTNLEFT) && !ButtonPressed2(BTNRIGHT)) {}
+			}
+			Wait(100);
+		}
+		board[select] = plyr + 1;
+		Redraw(false, 0, plyr);
+		until (!ButtonPressed2(BTNCENTER)) {}
+		CheckWin();
+	}
 }
 
 
 void ChooseP2() {
-    TextOut(16, LCD_LINE1, "TIC-TAC-TOE", 0);
-    TextOut(26, LCD_LINE7, "Players:", 0);
-    TextOut(16, LCD_LINE8, "1         2", 0);
-    until (ButtonPressed2(BTNLEFT) || ButtonPressed2(BTNRIGHT)) {}
-    p2ai = (ButtonPressed2(BTNLEFT));
-    until (ButtonPressed2(BTNLEFT) == false && ButtonPressed2(BTNRIGHT) == false) {}
+	TextOut(16, LCD_LINE1, "TIC-TAC-TOE", 0);
+	TextOut(26, LCD_LINE7, "Players:", 0);
+	TextOut(16, LCD_LINE8, "1         2", 0);
+	until (ButtonPressed2(BTNLEFT) || ButtonPressed2(BTNRIGHT)) {}
+	p2ai = (ButtonPressed2(BTNLEFT));
+	until (ButtonPressed2(BTNLEFT) == false && ButtonPressed2(BTNRIGHT) == false) {}
 }
 
 
 void AI() {
-    if (gameover == false) {
-        aimove =- 1;
-        for (i = 1; i <= 2; i++) {
-            if ((board[0] == 0) && (board[1] == i) && (board[2] == i)) aimove = 0;
-            if ((board[3] == 0) && (board[4] == i) && (board[5] == i)) aimove = 3;
-            if ((board[6] == 0) && (board[7] == i) && (board[8] == i)) aimove = 6;
-            if ((board[0] == 0) && (board[3] == i) && (board[6] == i)) aimove = 0;
-            if ((board[1] == 0) && (board[4] == i) && (board[7] == i)) aimove = 1;
-            if ((board[2] == 0) && (board[5] == i) && (board[8] == i)) aimove = 2;
-            if ((board[2] == 0) && (board[4] == i) && (board[6] == i)) aimove = 2;
-            if ((board[0] == 0) && (board[4] == i) && (board[8] == i)) aimove = 0;
+	if (gameover == false) {
+		aimove =- 1;
+		for (i = 1; i <= 2; i++) {
+			if ((board[0] == 0) && (board[1] == i) && (board[2] == i)) aimove = 0;
+			if ((board[3] == 0) && (board[4] == i) && (board[5] == i)) aimove = 3;
+			if ((board[6] == 0) && (board[7] == i) && (board[8] == i)) aimove = 6;
+			if ((board[0] == 0) && (board[3] == i) && (board[6] == i)) aimove = 0;
+			if ((board[1] == 0) && (board[4] == i) && (board[7] == i)) aimove = 1;
+			if ((board[2] == 0) && (board[5] == i) && (board[8] == i)) aimove = 2;
+			if ((board[2] == 0) && (board[4] == i) && (board[6] == i)) aimove = 2;
+			if ((board[0] == 0) && (board[4] == i) && (board[8] == i)) aimove = 0;
 
-            if ((board[0] == i) && (board[1] == 0) && (board[2] == i)) aimove = 1;
-            if ((board[3] == i) && (board[4] == 0) && (board[5] == i)) aimove = 4;
-            if ((board[6] == i) && (board[7] == 0) && (board[8] == i)) aimove = 7;
-            if ((board[0] == i) && (board[3] == 0) && (board[6] == i)) aimove = 3;
-            if ((board[1] == i) && (board[4] == 0) && (board[7] == i)) aimove = 4;
-            if ((board[2] == i) && (board[5] == 0) && (board[8] == i)) aimove = 5;
-            if ((board[2] == i) && (board[4] == 0) && (board[6] == i)) aimove = 4;
-            if ((board[0] == i) && (board[4] == 0) && (board[8] == i)) aimove = 4;
+			if ((board[0] == i) && (board[1] == 0) && (board[2] == i)) aimove = 1;
+			if ((board[3] == i) && (board[4] == 0) && (board[5] == i)) aimove = 4;
+			if ((board[6] == i) && (board[7] == 0) && (board[8] == i)) aimove = 7;
+			if ((board[0] == i) && (board[3] == 0) && (board[6] == i)) aimove = 3;
+			if ((board[1] == i) && (board[4] == 0) && (board[7] == i)) aimove = 4;
+			if ((board[2] == i) && (board[5] == 0) && (board[8] == i)) aimove = 5;
+			if ((board[2] == i) && (board[4] == 0) && (board[6] == i)) aimove = 4;
+			if ((board[0] == i) && (board[4] == 0) && (board[8] == i)) aimove = 4;
 
-            if ((board[0] == i) && (board[1] == i) && (board[2] == 0)) aimove = 2;
-            if ((board[3] == i) && (board[4] == i) && (board[5] == 0)) aimove = 5;
-            if ((board[6] == i) && (board[7] == i) && (board[8] == 0)) aimove = 8;
-            if ((board[0] == i) && (board[3] == i) && (board[6] == 0)) aimove = 6;
-            if ((board[1] == i) && (board[4] == i) && (board[7] == 0)) aimove = 7;
-            if ((board[2] == i) && (board[5] == i) && (board[8] == 0)) aimove = 8;
-            if ((board[2] == i) && (board[4] == i) && (board[6] == 0)) aimove = 6;
-            if ((board[0] == i) && (board[4] == i) && (board[8] == 0)) aimove = 8;
-        }
+			if ((board[0] == i) && (board[1] == i) && (board[2] == 0)) aimove = 2;
+			if ((board[3] == i) && (board[4] == i) && (board[5] == 0)) aimove = 5;
+			if ((board[6] == i) && (board[7] == i) && (board[8] == 0)) aimove = 8;
+			if ((board[0] == i) && (board[3] == i) && (board[6] == 0)) aimove = 6;
+			if ((board[1] == i) && (board[4] == i) && (board[7] == 0)) aimove = 7;
+			if ((board[2] == i) && (board[5] == i) && (board[8] == 0)) aimove = 8;
+			if ((board[2] == i) && (board[4] == i) && (board[6] == 0)) aimove = 6;
+			if ((board[0] == i) && (board[4] == i) && (board[8] == 0)) aimove = 8;
+		}
 		while (aimove == -1) {
 			i = Random(9);
 			if (board[i] == 0) aimove = i;
 		}
-        board[aimove] = 2; // AI is always O, Player 1 is always X
-        Redraw(false, 0, 0);
-        CheckWin();
-        }
-    }
+		board[aimove] = 2; // AI is always O, Player 1 is always X
+		Redraw(false, 0, 0);
+		CheckWin();
+		}
+	}
 
 
 void GameOver() {
-    if (winner == 0) {
+	if (winner == 0) {
 		PlayTone(2000, 250);
 	} else {
 		PlayTone(4000, 250);
 	}
-    Redraw(false, 0, 0);
+	Redraw(false, 0, 0);
 	Wait(3000);
-    ClearScreen();
-    TextOut(16, LCD_LINE1, "TIC-TAC-TOE", 0);
+	ClearScreen();
+	TextOut(16, LCD_LINE1, "TIC-TAC-TOE", 0);
 	TextOut(22, LCD_LINE4, "GAME OVER", 0);
-    if (winner == 0) {
+	if (winner == 0) {
 		TextOut(40, LCD_LINE5, "Draw", 0);
 	} else if (p2ai && winner == 2) {
 		TextOut(32, LCD_LINE5, "AI won", 0);
 	} else {
 		TextOut(12, LCD_LINE5, "Player " + NumToStr(winner) + " won", 0); // strcat?
 	}
-    TextOut(45, LCD_LINE8, "OK", 0);
-    until (ButtonPressed2(BTNCENTER)) {}
-    until (ButtonPressed2(BTNCENTER) == false) {}
-    ClearScreen();
+	TextOut(45, LCD_LINE8, "OK", 0);
+	until (ButtonPressed2(BTNCENTER)) {}
+	until (ButtonPressed2(BTNCENTER) == false) {}
+	ClearScreen();
 }
 
 
 task main() {
-    ChooseP2();
-    for (int alt = 0; true; alt++) {
-        gameover = false;
+	ChooseP2();
+	for (int alt = 0; true; alt++) {
+		gameover = false;
 		turn = 0;
 		select = 0;
-        for (i = 0; i < 9; i++) board[i] = 0;
-        while (gameover == false) {
-            if (p2ai) {
+		for (i = 0; i < 9; i++) board[i] = 0;
+		while (gameover == false) {
+			if (p2ai) {
 				if (alt % 2) {
 					AI();
 					P(0);
@@ -194,7 +194,7 @@ task main() {
 				P(alt % 2);
 				P((alt + 1) % 2);
 			}
-        }
-        GameOver();
-    }
+		}
+		GameOver();
+	}
 }
