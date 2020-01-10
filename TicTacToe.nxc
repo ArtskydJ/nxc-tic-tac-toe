@@ -39,6 +39,19 @@ void CheckWin() {
 }
 
 
+void drawOAt(int boardPos) {
+	CircleOut(((boardPos % 3) * 21) + 10, 53 - ((boardPos / 3) * 21), 8, 0);
+}
+
+void drawXAt(int boardPos) {
+	LineOut(((boardPos % 3) * 21) + 3, 60 - ((boardPos / 3) * 21), ((boardPos % 3) * 21) + 18, 45 - ((boardPos / 3) * 21), 0);
+	LineOut(((boardPos % 3) * 21) + 3, 45 - ((boardPos / 3) * 21), ((boardPos % 3) * 21) + 18, 60 - ((boardPos / 3) * 21), 0);
+}
+
+void drawBoxAt(int boardPos) {
+	RectOut(((boardPos % 3) * 21) + 2, 44 - ((boardPos / 3) * 21), 17, 17, 0);
+}
+
 void Redraw(bool dslct, int pslct, bool odraw) {
 	ClearScreen();
 	LineOut(21, 0, 21, 63, 0); // horizontal
@@ -46,24 +59,18 @@ void Redraw(bool dslct, int pslct, bool odraw) {
 	LineOut(0, 21, 63, 21, 0); // vertical
 	LineOut(0, 42, 63, 42, 0); // vertical
 	for (int k = 0; k < 9; k++) {
-		if (board[k] == 1) {
-			LineOut(((k % 3) * 21) + 3, 60 - ((k / 3) * 21), ((k % 3) * 21) + 18, 45 - ((k / 3) * 21), 0);
-			LineOut(((k % 3) * 21) + 3, 45 - ((k / 3) * 21), ((k % 3) * 21) + 18, 60 - ((k / 3) * 21), 0);
-		}
-		if (board[k] == 2) {
-			CircleOut(((k % 3) * 21) + 10, 53 - ((k / 3) * 21), 8, 0);
-		}
+		if (board[k] == 1) drawXAt(k);
+		if (board[k] == 2) drawOAt(k);
 	}
 	TextOut(70, LCD_LINE1, "X: " + NumToStr(xwins), 0);
 	TextOut(70, LCD_LINE2, "O: " + NumToStr(owins), 0);
 	TextOut(70, LCD_LINE4, "D: " + NumToStr(dwins), 0);
 	if (dslct) {
-		RectOut(((pslct % 3) * 21) + 2, 44 - ((pslct / 3) * 21), 17, 17, 0);
+		drawBoxAt(pslct);
 		if (odraw) {
-			CircleOut(((pslct % 3) * 21) + 10, 53 - ((pslct / 3) * 21), 8, 0);
+			drawOAt(pslct);
 		} else {
-			LineOut(((pslct % 3) * 21) + 3, 60 - ((pslct / 3) * 21), ((pslct % 3) * 21) + 18, 45 - ((pslct / 3) * 21), 0);
-			LineOut(((pslct % 3) * 21) + 3, 45 - ((pslct / 3) * 21), ((pslct % 3) * 21) + 18, 60 - ((pslct / 3) * 21), 0);
+			drawXAt(pslct);
 		}
 	}
 }
