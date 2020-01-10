@@ -54,10 +54,10 @@ void drawBoxAt(int boardPos) {
 
 void Redraw(bool dslct, int pslct, bool odraw) {
 	ClearScreen();
-	LineOut(21, 0, 21, 63, 0); // horizontal
-	LineOut(42, 0, 42, 63, 0); // horizontal
-	LineOut(0, 21, 63, 21, 0); // vertical
-	LineOut(0, 42, 63, 42, 0); // vertical
+	LineOut(21, 1, 21, 62, 0); // horizontal
+	LineOut(42, 1, 42, 62, 0); // horizontal
+	LineOut(1, 21, 62, 21, 0); // vertical
+	LineOut(1, 42, 62, 42, 0); // vertical
 	for (int k = 0; k < 9; k++) {
 		if (board[k] == 1) drawXAt(k);
 		if (board[k] == 2) drawOAt(k);
@@ -163,7 +163,7 @@ void GameOver() {
 		PlayTone(4000, 250);
 	}
 	Redraw(false, 0, 0);
-	Wait(3000);
+	Wait(2000);
 	ClearScreen();
 	TextOut(16, LCD_LINE1, "TIC-TAC-TOE", 0);
 	TextOut(22, LCD_LINE4, "GAME OVER", 0);
