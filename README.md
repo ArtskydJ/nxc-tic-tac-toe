@@ -7,21 +7,18 @@ Compile with the NXC compiler.
 
 I don't believe this requires the enchanced NBC/NXC firmware.
 
-# Known Issues
+## Known Issues
 
 - The AI moves randomly, unless it is able to win, or block a win
 
-# To Do
+## Build
 
-- Change the coding style. I wrote it over 2 years ago and it looks ugly now. :)
+### Prerequisites
 
-# Build
+- [BricxCC](http://bricxcc.sourceforge.net/) (Windows)
+- An NXT *(Enhanced NBC/NXC firmware is NOT required)*
 
-## Prerequisites
-
-- [BricxCC]()
-
-## Compile to the NXT
+### Compile to the NXT
 
 You have a few options:
 
