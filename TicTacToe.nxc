@@ -4,7 +4,7 @@
 
 
 int board[9], lastplayed, select, winner, a, b, i, aimove=0, xwins=0, owins=0, dwins=0;
-bool gameover, turn, p2ai;
+bool gameover, p2ai;
 
 bool ButtonPressed2(byte btn) { return ButtonPressed(btn, false); }
 
@@ -172,7 +172,7 @@ void GameOver() {
 	} else if (p2ai && winner == 2) {
 		TextOut(32, LCD_LINE5, "AI won", 0);
 	} else {
-		TextOut(12, LCD_LINE5, "Player " + NumToStr(winner) + " won", 0); // strcat?
+		TextOut(12, LCD_LINE5, "Player " + NumToStr(winner) + " won", 0);
 	}
 	TextOut(45, LCD_LINE8, "OK", 0);
 	until (ButtonPressed2(BTNCENTER)) {}
@@ -185,7 +185,6 @@ task main() {
 	ChooseP2();
 	for (int alt = 0; true; alt++) {
 		gameover = false;
-		turn = 0;
 		select = 0;
 		for (i = 0; i < 9; i++) board[i] = 0;
 		while (gameover == false) {
